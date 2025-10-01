@@ -4,17 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Portfolio Flipbook</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #fafafa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      color: #333;
+    }
+    #flipbook-container {
+      perspective: 2000px;
+      width: 800px;
+      max-width: 95vw;
+      height: 600px;
+      max-height: 90vh;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      background: white;
+      overflow: hidden;
+    }
+    .page-content {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .page-content:hover {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      transform: scale(1.02);
+    }
+  </style>
 </head>
 <body>
   <div id="flipbook-container">
     <div id="book"></div>
   </div>
 
-  <!-- IMPORTANT: Load these in this order -->
+  <!-- JS Libraries (ensure these are present in /libs/ folder) -->
   <script src="libs/pdf.min.js"></script>
   <script src="libs/pdf.worker.min.js"></script>
   <script src="libs/page-flip.browser.min.js"></script>
-  <script src="js/flipbook.js"></script>
+
+  <script>
+    const PDF_URL = "https://cdn.jsdelivr.net/gh/elijah-design/portfolio/cv%20portfolio%20spread.pdf";
+    const DOWNLOAD_PASSWORD = "Portfolio2025";
+
+    const bookEl = document.getElementById('book');
+    let pdfDoc = null;
+    let pagesCanvases = [];
+
+    if (!pdfjsLib || !St || !St.PageFlip) {
+      console.error("Libraries not loaded correctly.");
+      bookEl.innerText = "Flipbook initialization error.";
+    } else {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "libs/pdf.worker.min.js";
+
+      pdfjsLib.getDocument({ url: PDF_URL, password: DOWNLOAD_PASSWORD }).promise
+        .then(doc => {
+          pdfDoc = doc;
+          console.log("PDF loaded:", doc.numPages, "pages");
+          return renderAllPages();
+        })
+        .then(() => {
+          if (pagesCanvases.length === 0) {
+            bookEl.innerText = "Failed to render PDF pages.";
+            return;
+          }
+          initializePageFlip();
+        })
+        .catch(err => {
+          console.error("PDF.js error:", err);
+          bookEl.innerText = "Error loading PDF.";
+        });
+
+      async function renderAllPages() {
+        const num = pdfDoc.numPages;
+        for (let i = 1; i <= num; i++) {
+          try {
+            const page = await pdfDoc.getPage(i);
+            const viewport = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+            pagesCanvases.push(canvas);
+          } catch (err) {
+            console.error("Error rendering page", i, err);
+          }
+        }
+      }
+
+      function initializePageFlip() {
+        const pageFlip = new St.PageFlip(bookEl, {
+          width: bookEl.clientWidth,
+          height: bookEl.clientHeight,
+          size: "fixed",
+          drawShadow: true,
+          flippingTime: 800,
+          showCover: false
+        });
+
+        const pageElements = pagesCanvases.map(canvas => {
+          const wrapper = document.createElement('div');
+          wrapper.classList.add('page-content');
+          wrapper.appendChild(canvas);
+          return wrapper;
+        });
+
+        pageFlip.loadFromHTML(pageElements);
+      }
+    }
+  </script>
 </body>
 </html>
