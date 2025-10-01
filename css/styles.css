@@ -1,4 +1,4 @@
-/* — Reset / base — */
+/* Reset & base */
 * {
   margin: 0;
   padding: 0;
@@ -10,11 +10,11 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  color: #333;
   font-family: sans-serif;
+  color: #333;
 }
 
-/* — Container for flipbook — */
+/* Container for flipbook */
 #flipbook-container {
   perspective: 2000px;
   width: 800px;
@@ -22,41 +22,19 @@ body {
   height: 600px;
   max-height: 90vh;
   position: relative;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   background: white;
   overflow: hidden;
 }
 
-/* — Each page — */
-.page {
-  position: absolute;
+/* Style for each page (inner container) */
+.page-content {
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
-  transform-origin: left center;
-  transform-style: preserve-3d;
-  transition: transform 0.8s ease, box-shadow 0.3s, transform 0.3s;
-  overflow: hidden;
+  /* On hover, apply subtle glow / zoom */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.page.back {
-  transform: rotateY(-180deg);
-}
-.page.flipped {
-  transform: rotateY(-180deg);
-  z-index: 2;
-}
-
-/* Hover effect: subtle glow + zoom slightly */
-.page:hover {
+.page-content:hover {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-  transform: scale(1.02) rotateY(0deg);
-}
-
-/* Optional fade‑in on new page (you can tweak) */
-.page.visible {
-  opacity: 1;
-  transition: opacity 0.5s;
-}
-.page.hidden {
-  opacity: 0;
+  transform: scale(1.02);
 }
