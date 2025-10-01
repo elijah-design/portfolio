@@ -1,80 +1,59 @@
 const PDF_URL = "https://cdn.jsdelivr.net/gh/elijah-design/portfolio/cv%20portfolio%20spread.pdf";
 const DOWNLOAD_PASSWORD = "Portfolio2025";
 
-const container = document.getElementById('book');
+const bookEl = document.getElementById('book');
 let pdfDoc = null;
-let pages = [];
+let pagesCanvases = [];
 
-// PDF.js setup
+// Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = "libs/pdf.worker.min.js";
 
+// Load PDF
 pdfjsLib.getDocument({ url: PDF_URL, password: DOWNLOAD_PASSWORD }).promise
   .then(doc => {
     pdfDoc = doc;
-    return loadPages();
+    return renderAllPages();
   })
   .then(() => {
-    setupFlipLogic();
+    initializePageFlip();
   })
   .catch(err => {
-    console.error("Error loading PDF:", err);
-    container.innerText = "Failed to load PDF.";
+    console.error("PDF load error:", err);
+    bookEl.innerText = "Failed to load PDF.";
   });
 
-async function loadPages() {
-  const count = pdfDoc.numPages;
-  for (let i = 1; i <= count; i++) {
+async function renderAllPages() {
+  const num = pdfDoc.numPages;
+  for (let i = 1; i <= num; i++) {
     const page = await pdfDoc.getPage(i);
     const viewport = page.getViewport({ scale: 1.5 });
     const canvas = document.createElement('canvas');
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    const ctx = canvas.getContext('2d');
-    await page.render({ canvasContext: ctx, viewport }).promise;
-
-    const pageDiv = document.createElement('div');
-    pageDiv.classList.add('page', 'front', 'hidden');
-    pageDiv.style.width = viewport.width + "px";
-    pageDiv.style.height = viewport.height + "px";
-    pageDiv.appendChild(canvas);
-
-    container.appendChild(pageDiv);
-    pages.push(pageDiv);
-  }
-
-  // mark the first page visible
-  if (pages.length > 0) {
-    pages[0].classList.remove('hidden');
-    pages[0].classList.add('visible');
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    pagesCanvases.push(canvas);
   }
 }
 
-function setupFlipLogic() {
-  pages.forEach((pg, idx) => {
-    pg.addEventListener('click', () => {
-      // flip this page
-      if (!pg.classList.contains('flipped')) {
-        pg.classList.add('flipped');
-        pg.classList.remove('visible');
-        pg.classList.add('hidden');
-        // reveal next page if exists
-        const next = pages[idx + 1];
-        if (next) {
-          next.classList.remove('hidden');
-          next.classList.add('visible');
-        }
-      } else {
-        // flip back
-        pg.classList.remove('flipped');
-        pg.classList.remove('visible');
-        pg.classList.add('hidden');
-        // show previous page
-        const prev = pages[idx - 1];
-        if (prev) {
-          prev.classList.remove('hidden');
-          prev.classList.add('visible');
-        }
-      }
-    });
+// Initialize the flipbook using page-flip
+function initializePageFlip() {
+  // Create PageFlip instance
+  const pageFlip = new St.PageFlip(bookEl, {
+    width: bookEl.clientWidth,
+    height: bookEl.clientHeight,
+    size: "fixed",
+    drawShadow: true,
+    flippingTime: 800,
+    showCover: false
   });
+
+  // Convert canvases to images or HTML elements
+  const pageElements = pagesCanvases.map(canvas => {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('page-content');
+    wrapper.appendChild(canvas);
+    return wrapper;
+  });
+
+  pageFlip.loadFromHTML(pageElements);
 }
