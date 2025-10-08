@@ -1,54 +1,711 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Elijah — DearFlip PDF Viewer</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Elijah — Flipbook Viewer</title>
 
-  <!-- DearFlip core CSS -->
-  <link rel="stylesheet" href="https://js.dearflip.com/wp-content/plugins/dflip/assets/css/dflip.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
 
-  <!-- DearFlip deps + JS -->
-  <script src="https://js.dearflip.com/wp-content/plugins/dflip/assets/js/libs/three.min.js"></script>
-  <script src="https://js.dearflip.com/wp-content/plugins/dflip/assets/js/dflip.min.js"></script>
+    <!-- PageFlip (3D curl) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/css/page-flip.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 
-  <style>
-    :root{
-      --bg:#eef0f3; --fg:#0e0f12;
-    }
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
-    .wrap{height:100vh;display:grid;place-items:center;padding:0;margin:0;}
-    /* Make the viewer scale responsively with viewport while keeping good margins */
-    .book{width:min(92vw,1200px);height:min(86vh,900px);}
-  </style>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #eef0f3;
+            --fg: #0e0f12;
+            --muted: #6f7783;
+            --accent: #5ebcff;
+            --stroke: #d8dde5;
+            --card: #f7f9fc;
+            --glass: #ffffffcc;
+            --shadow: 0 20px 60px rgba(14, 15, 18, .12);
+            --topbar-h: 68px;
+            --thumb-h: 120px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif
+            
+        }
+
+        .app {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            min-height: 100%
+        }
+
+        /* Toolbar */
+        .toolbar {
+            height: var(--topbar-h);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px clamp(12px, 3vw, 28px);
+            background: linear-gradient(180deg, #fff, #fbfcff);
+            border-bottom: 1px solid var(--stroke);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .toolbar .group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--stroke);
+            padding: 6px 10px;
+            border-radius: 14px;
+            box-shadow: var(--shadow)
+        }
+
+        button,
+        .iconbtn {
+            appearance: none;
+            border: none;
+            background: #fff;
+            border: 1px solid var(--stroke);
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform .25s ease, box-shadow .25s ease, opacity .25s ease, filter .25s ease;
+        }
+
+        button:hover,
+        .iconbtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+            filter: drop-shadow(0 0 10px rgba(94, 188, 255, .25))
+        }
+
+        .iconbtn {
+            display: inline-grid;
+            place-items: center;
+            min-width: 40px
+        }
+
+        #pageNum {
+            width: 64px;
+            text-align: center;
+            border: 1px solid var(--stroke);
+            border-radius: 10px;
+            padding: 6px;
+            background: #fff
+        }
+
+        .spacer {
+            flex: 1
+        }
+
+        /* Stage */
+        .stage {
+            position: relative;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            padding: 3.5vh 5vw
+        }
+
+        /* Book frame */
+        .book-wrap {
+            position: relative;
+            max-width: min(92vw, 1600px);
+            width: 100%;
+            aspect-ratio: 16/11;
+            display: grid;
+            place-items: center;
+            user-select: none;
+            touch-action: pan-y;
+            filter: drop-shadow(0 24px 40px rgba(14, 15, 18, .16));
+            transition: filter .35s ease;
+        }
+
+        .book-wrap:hover {
+            filter: drop-shadow(0 28px 70px rgba(14, 15, 18, .2)) drop-shadow(0 0 24px rgba(94, 188, 255, .12))
+        }
+
+        .book-wrap.glow {
+            filter: drop-shadow(0 28px 70px rgba(14, 15, 18, .23)) drop-shadow(0 0 36px rgba(94, 188, 255, .18))
+        }
+
+        .book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(120% 140% at 50% 50%, #fdfefe 0%, #eef1f7 70%, #e7ebf2 100%);
+            border-radius: 0;
+            overflow: hidden;
+            border: 1px solid var(--stroke);
+        }
+
+        .book:before {
+            /* bevel */
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 0;
+            box-shadow: inset 0 0 0 2px #e5e9f2, inset 0 0 40px rgba(0, 0, 0, .06);
+        }
+
+        .spine {
+            /* thin spine hint */
+            position: absolute;
+            top: 6%;
+            bottom: 6%;
+            left: 50%;
+            width: 2px;
+            transform: translateX(-1px);
+            background: linear-gradient(180deg, #cfd6e5, #f6f8ff 35%, #cfd6e5);
+            filter: blur(.2px);
+            opacity: .6;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Page STACKS (thickness) */
+        .stack {
+            position: absolute;
+            top: 5%;
+            bottom: 5%;
+            pointer-events: none;
+            z-index: 3;
+            background: repeating-linear-gradient(90deg, #e3e8f3 0, #fdfefe 2px, #e3e8f3 4px);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, .05);
+            transition: width .45s ease, opacity .35s ease, filter .35s ease;
+            opacity: .95;
+            z-index: -2;
+        }
+
+        .stack-left {
+            left: 0;
+            border-radius: 0;
+            width: 0
+        }
+
+        .stack-right {
+            right: 0;
+            border-radius: 0;
+            width: 0
+        }
+
+        .closed .stack-right {
+            filter: drop-shadow(0 6px 18px rgba(0, 0, 0, .12))
+        }
+
+        /* Side arrows (fixed even when zoomed) */
+        .side-arrow {
+            position: fixed;
+            top: 50%;
+            translate: 0 -50%;
+            width: 48px;
+            height: 72px;
+            border-radius: 16px;
+            border: 1px solid var(--stroke);
+            background: var(--glass);
+            display: grid;
+            place-items: center;
+            backdrop-filter: blur(6px);
+            box-shadow: var(--shadow);
+            opacity: .92;
+            z-index: 26;
+            transition: transform .25s ease, box-shadow .25s ease, opacity .25s ease;
+        }
+
+        .side-arrow:hover {
+            opacity: 1;
+            transform: translateY(-2px)
+        }
+
+        #prevSide {
+            left: 18px
+        }
+
+        #nextSide {
+            right: 18px
+        }
+
+        /* Thumbnails rail */
+        .thumb-rail {
+            position: absolute;
+            left: 50%;
+            bottom: 14px;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid var(--stroke);
+            background: var(--glass);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            max-width: min(90vw, 1300px);
+            overflow-x: auto;
+            scrollbar-width: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease, transform .25s ease;
+            z-index: 26;
+        }
+
+        .thumb-rail.show {
+            opacity: 1;
+            pointer-events: auto
+        }
+
+        .thumb {
+            flex: 0 0 auto;
+            height: var(--thumb-h);
+            width: auto;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--stroke);
+            background: #fff;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: filter .25s ease, transform .25s ease;
+        }
+
+        .thumb:hover {
+            filter: drop-shadow(0 0 10px rgba(94, 188, 255, .25));
+            transform: translateY(-2px)
+        }
+
+        .thumb.active {
+            outline: 2px solid var(--accent);
+            filter: drop-shadow(0 0 14px rgba(94, 188, 255, .25))
+        }
+
+        /* Pages + link overlays */
+        .page {
+            position: relative;
+            background: #fff;
+        }
+
+        .page canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .link-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .link-layer a {
+            position: absolute;
+            pointer-events: auto;
+            display: block;
+            outline: none;
+            border-radius: 6px;
+        }
+
+        .link-layer a:hover {
+            box-shadow: 0 0 0 2px rgba(94, 188, 255, .55) inset;
+        }
+
+        /* Cover hard-bind vibe */
+        .page.cover::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, .08), transparent 8%),
+                linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0));
+            box-shadow:
+                inset 0 0 0 2px #e0e6f2,
+                inset 0 10px 30px rgba(0, 0, 0, .08),
+                0 12px 28px rgba(0, 0, 0, .12);
+        }
+
+        /* Zoom state (book scales, arrows stay fixed) */
+        .zoomed .book-wrap {
+            transform: scale(var(--zoom, 1));
+            transform-origin: center center
+        }
+
+        .zoom-indicator {
+            font-size: .9rem;
+            color: var(--muted);
+            margin-left: 6px
+        }
+    </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <!-- Minimal HTML embed. DearFlip auto-detects elements with class "_df_book" -->
-    <div id="book" class="_df_book book"
-         source="https://raw.githubusercontent.com/elijah-design/portfolio/main/14mb%202025%20cv%20portfolio.pdf">
+    <div class="app">
+        <!-- Toolbar -->
+        <header class="toolbar">
+            <div class="group">
+                <button id="prevTop" title="Previous (←)" aria-label="Previous">⟨</button>
+                <input id="pageNum" type="number" min="1" value="1" title="Page number">
+                <span>/ <span id="totalPages">—</span></span>
+                <button id="nextTop" title="Next (→)" aria-label="Next">⟩</button>
+            </div>
+
+            <div class="group">
+                <button id="zoomOut" class="iconbtn" title="Zoom out (−)">−</button>
+                <button id="zoomIn" class="iconbtn" title="Zoom in (+)">+</button>
+                <span class="zoom-indicator" id="zoomLabel">100%</span>
+                <button id="fullBtn" class="iconbtn" title="Fullscreen">⤢</button>
+                <a id="dlBtn" class="iconbtn" title="Download PDF" href="#" download>⤓</a>
+                <button id="thumbBtn" class="iconbtn" title="Thumbnails">▦</button>
+            </div>
+
+            <div class="spacer"></div>
+        </header>
+
+        <!-- Stage -->
+        <main class="stage" id="stage">
+            <div class="book-wrap closed" id="wrap">
+                <div class="book" id="book">
+                    <!-- Stacks -->
+                    <div class="stack stack-left" id="stackL" aria-hidden="true"></div>
+                    <div class="stack stack-right" id="stackR" aria-hidden="true"></div>
+                </div>
+                <div class="spine" aria-hidden="true"></div>
+
+                <!-- Side arrows are fixed to viewport -->
+                <button id="prevSide" class="side-arrow" aria-label="Previous">⟨</button>
+                <button id="nextSide" class="side-arrow" aria-label="Next">⟩</button>
+
+                <div class="thumb-rail" id="thumbRail" aria-label="Thumbnails"></div>
+            </div>
+        </main>
     </div>
-  </div>
 
-  <script>
-    // If you prefer jsDelivr CDN instead of raw.githubusercontent.com, swap the line above for:
-    // source="https://cdn.jsdelivr.net/gh/elijah-design/portfolio/14mb%202025%20cv%20portfolio.pdf"
+    <script>
+        /* ===== CONFIG ===== */
+        const PDF_URL = "https://cdn.jsdelivr.net/gh/elijah-design/portfolio-flipbook/2025%20cv%20portfolio%20no%20password.pdf";
+        const DOWNLOAD_PASSWORD = "Portfolio2025";
+        const MAX_THUMBS = 40;
 
-    // Global defaults (optional) to match your UX:
-    // Docs: https://js.dearflip.com/docs/options-list/
-    if (window.DFLIP && DFLIP.defaults){
-      DFLIP.defaults.webgl = true;              // use 3D/pageflip canvas
-      DFLIP.defaults.webglShadow = true;
-      DFLIP.defaults.backgroundColor = "#eef0f3";
-      DFLIP.defaults.enableDownload = true;     // show download
-      DFLIP.defaults.enablePrint = false;       // usually off for portfolios
-      DFLIP.defaults.soundEnable = true;        // paper flip sound
-      DFLIP.defaults.autoEnableOutline = true;  // table of contents if present
-      DFLIP.defaults.pageMode = DFLIP.PAGE_MODE.AUTO; // single on cover, then spread
-      DFLIP.defaults.forceFit = true;           // fit nicely in container
-      DFLIP.defaults.hard = "cover";            // make only the cover hard
-      // DFLIP.defaults.duration = 800;         // slower flip (ms), uncomment if you want
-    }
-  </script>
+        /* ===== Setup ===== */
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        const bookEl = document.getElementById("book");
+        const wrapEl = document.getElementById("wrap");
+        const railEl = document.getElementById("thumbRail");
+        const totalEl = document.getElementById("totalPages");
+        const pageNumEl = document.getElementById("pageNum");
+        const zoomLabel = document.getElementById("zoomLabel");
+        const dlBtn = document.getElementById("dlBtn");
+        const stackL = document.getElementById("stackL");
+        const stackR = document.getElementById("stackR");
+        dlBtn.href = PDF_URL;
+
+        let pdfDoc = null;
+        let pageFlip = null;
+        let currentZoom = 1;
+
+        /* tiny “paper flip” sound (WebAudio) */
+        const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+
+        function flipSound() {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = "triangle";
+            o.frequency.setValueAtTime(220, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+            o.connect(g).connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + 0.26);
+        }
+
+        /* helpers */
+        async function renderPageToCanvas(page, scale) {
+            const viewport = page.getViewport({
+                scale
+            });
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = Math.floor(viewport.width);
+            canvas.height = Math.floor(viewport.height);
+            await page.render({
+                canvasContext: ctx,
+                viewport
+            }).promise;
+            return {
+                canvas,
+                viewport
+            };
+        }
+
+        function pageNodeFromCanvas(canvas, isCover = false) {
+            const page = document.createElement("div");
+            page.className = "page" + (isCover ? " cover" : "");
+            page.appendChild(canvas);
+            return page;
+        }
+
+        /* Link overlay (preserve PDF links) */
+        async function addLinkOverlays(pageProxy, viewport, pageEl) {
+            const layer = document.createElement("div");
+            layer.className = "link-layer";
+            pageEl.appendChild(layer);
+
+            const annotations = await pageProxy.getAnnotations();
+            annotations.forEach(a => {
+                if (a.subtype !== "Link") return;
+                const rect = pdfjsLib.Util.normalizeRect(a.rect);
+                const transform = viewport.convertToViewportRectangle(rect);
+                const [x1, y1, x2, y2] = transform;
+                const left = Math.min(x1, x2),
+                    top = Math.min(y1, y2);
+                const width = Math.abs(x1 - x2),
+                    height = Math.abs(y1 - y2);
+
+                const href = a.url || null;
+                if (!href && !a.dest) return; // basic external link support
+
+                const link = document.createElement("a");
+                link.href = href || "#";
+                if (href) link.target = "_blank";
+                link.style.left = `${left}px`;
+                link.style.top = `${top}px`;
+                link.style.width = `${width}px`;
+                link.style.height = `${height}px`;
+                layer.appendChild(link);
+            });
+        }
+
+        /* Thumbnails */
+        async function buildThumbs(pdf) {
+            railEl.innerHTML = "";
+            const count = Math.min(pdf.numPages, MAX_THUMBS);
+            for (let i = 1; i <= count; i++) {
+                const holder = document.createElement("div");
+                holder.className = "thumb";
+                holder.title = `Page ${i}`;
+                railEl.appendChild(holder);
+                const obs = new IntersectionObserver(async (ents, o) => {
+                    if (ents[0].isIntersecting) {
+                        const p = await pdf.getPage(i);
+                        const v = p.getViewport({
+                            scale: 0.25
+                        });
+                        const ratio = 120 / v.height;
+                        const {
+                            canvas
+                        } = await renderPageToCanvas(p, 0.25 * ratio * 4);
+                        holder.appendChild(canvas);
+                        o.disconnect();
+                    }
+                }, {
+                    root: railEl,
+                    threshold: 0.01
+                });
+                obs.observe(holder);
+
+                holder.addEventListener("click", () => {
+                    pageFlip.flip(i - 1);
+                    railEl.classList.remove("show");
+                });
+            }
+        }
+
+        /* Update page stack (thickness) */
+        function updateStacks(zeroIndexedPage) {
+            if (!pdfDoc) return;
+            const total = pdfDoc.numPages;
+            const leftCount = Math.max(0, zeroIndexedPage);
+            const rightCount = Math.max(0, total - zeroIndexedPage - 1);
+            const maxThick = 26; // px
+            stackL.style.width = Math.round(maxThick * (leftCount / total)) + "px";
+            stackR.style.width = Math.round(maxThick * (rightCount / total)) + "px";
+            if (zeroIndexedPage === 0) {
+                wrapEl.classList.add("closed");
+            } else {
+                wrapEl.classList.remove("closed");
+            }
+            wrapEl.classList.add("glow");
+            setTimeout(() => wrapEl.classList.remove("glow"), 300);
+        }
+
+        /* Position fixed arrows against book bounds */
+        function placeFixedArrows() {
+            const bookRect = wrapEl.getBoundingClientRect();
+            const midY = (bookRect.top + bookRect.bottom) / 2;
+            const inset = 12; // a bit inside the book frame
+            const prev = document.getElementById("prevSide");
+            const next = document.getElementById("nextSide");
+            prev.style.top = `${midY}px`;
+            prev.style.left = `${Math.max(18, bookRect.left + inset)}px`;
+            next.style.top = `${midY}px`;
+            next.style.right = `${Math.max(18, window.innerWidth - bookRect.right + inset)}px`;
+        }
+
+        /* ===== Init ===== */
+        (async function init() {
+            try {
+                pdfDoc = await pdfjsLib.getDocument({
+                    url: PDF_URL,
+                    password: DOWNLOAD_PASSWORD
+                }).promise;
+            } catch (err) {
+                alert("Could not open the PDF. If it is password-protected, please verify the password.");
+                throw err;
+            }
+
+            totalEl.textContent = pdfDoc.numPages;
+            pageNumEl.max = pdfDoc.numPages;
+
+            // Base aspect from first page
+            const first = await pdfDoc.getPage(1);
+            const {
+                viewport: vp1
+            } = await renderPageToCanvas(first, 1); // just to get size quickly
+            const ratio = vp1.height / vp1.width;
+            const PF_WIDTH = 1000;
+            const PF_HEIGHT = Math.round(PF_WIDTH * ratio);
+
+            // Render all pages full-bleed into fixed size so they fill the PageFlip pages
+            const pages = [];
+            const scaleForGoodQuality = 1.5 * (PF_WIDTH / vp1.width);
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const p = await pdfDoc.getPage(i);
+                const {
+                    canvas,
+                    viewport
+                } = await renderPageToCanvas(p, scaleForGoodQuality);
+                // pack into PF frame while covering
+                const fit = document.createElement("canvas");
+                fit.width = PF_WIDTH;
+                fit.height = PF_HEIGHT;
+                const fx = fit.getContext("2d");
+                fx.fillStyle = "#ffffff";
+                fx.fillRect(0, 0, PF_WIDTH, PF_HEIGHT);
+                const sx = canvas.width,
+                    sy = canvas.height;
+                const scale = Math.max(PF_WIDTH / sx, PF_HEIGHT / sy);
+                const dw = Math.round(sx * scale),
+                    dh = Math.round(sy * scale);
+                const dx = Math.round((PF_WIDTH - dw) / 2),
+                    dy = Math.round((PF_HEIGHT - dh) / 2);
+                fx.drawImage(canvas, dx, dy, dw, dh);
+
+                const node = pageNodeFromCanvas(fit, i === 1);
+                pages.push(node);
+
+                // link overlay (convert rects using a viewport that matches our fit scale)
+                const overlayViewport = p.getViewport({
+                    scale: scaleForGoodQuality * scale
+                });
+                await addLinkOverlays(p, overlayViewport, node);
+            }
+
+            // Thumbs (lazy)
+            buildThumbs(pdfDoc);
+
+            // PageFlip (cover single, then spreads)
+            pageFlip = new St.PageFlip(bookEl, {
+                width: PF_WIDTH,
+                height: PF_HEIGHT,
+                size: "stretch",
+                maxShadowOpacity: 0.3,
+                showCover: true,
+                mobileScrollSupport: false,
+                usePortrait: false,
+                drawShadow: true,
+                flippingTime: 650,
+                startZIndex: 5
+            });
+
+            pageFlip.loadFromHTML(pages);
+            pageFlip.turnToPage(0);
+            updateStacks(0);
+
+            pageFlip.on("flip", (e) => {
+                pageNumEl.value = (e.data + 1);
+                flipSound();
+                updateStacks(e.data);
+                [...railEl.children].forEach((el, idx) => el.classList.toggle("active", idx === e.data));
+                placeFixedArrows();
+            });
+
+            // Controls
+            const prev = () => pageFlip.flipPrev();
+            const next = () => pageFlip.flipNext();
+            document.getElementById("prevTop").onclick = prev;
+            document.getElementById("nextTop").onclick = next;
+            document.getElementById("prevSide").onclick = prev;
+            document.getElementById("nextSide").onclick = next;
+
+            pageNumEl.addEventListener("change", () => {
+                let n = Math.max(1, Math.min(pdfDoc.numPages, parseInt(pageNumEl.value || "1", 10)));
+                pageFlip.turnToPage(n - 1);
+            });
+
+            // Zoom (CSS transform; curl stays smooth)
+            const applyZoom = () => {
+                wrapEl.style.setProperty("--zoom", String(currentZoom));
+                const app = wrapEl.parentElement.parentElement;
+                if (currentZoom !== 1) app.classList.add("zoomed");
+                else app.classList.remove("zoomed");
+                zoomLabel.textContent = Math.round(currentZoom * 100) + "%";
+                placeFixedArrows();
+            };
+            document.getElementById("zoomIn").onclick = () => {
+                currentZoom = Math.min(2.5, +(currentZoom + 0.1).toFixed(2));
+                applyZoom();
+            };
+            document.getElementById("zoomOut").onclick = () => {
+                currentZoom = Math.max(0.8, +(currentZoom - 0.1).toFixed(2));
+                applyZoom();
+            };
+
+            document.getElementById("fullBtn").onclick = () => {
+                const el = document.documentElement;
+                if (!document.fullscreenElement) {
+                    el.requestFullscreen?.();
+                } else {
+                    document.exitFullscreen?.();
+                }
+                setTimeout(placeFixedArrows, 200);
+            };
+
+            const thumbBtn = document.getElementById("thumbBtn");
+            thumbBtn.addEventListener("mouseenter", () => railEl.classList.add("show"));
+            thumbBtn.addEventListener("mouseleave", () => setTimeout(() => railEl.classList.remove("show"), 400));
+            railEl.addEventListener("mouseenter", () => railEl.classList.add("show"));
+            railEl.addEventListener("mouseleave", () => railEl.classList.remove("show"));
+
+            // Keyboard
+            window.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowLeft") prev();
+                if (e.key === "ArrowRight") next();
+                if (e.key.toLowerCase() === "f") document.getElementById("fullBtn").click();
+                if (e.key === "+") document.getElementById("zoomIn").click();
+                if (e.key === "-") document.getElementById("zoomOut").click();
+            });
+
+            // initial arrow placement + on resize
+            placeFixedArrows();
+            window.addEventListener("resize", placeFixedArrows);
+        })();
+    </script>
 </body>
+
 </html>
