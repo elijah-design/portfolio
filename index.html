@@ -8,10 +8,76 @@
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <!-- StPageFlip -->
+  <!-- StPageFlip styles -->
   <link rel="stylesheet" href="https://unpkg.com/page-flip/dist/css/page-flip.css">
 
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --bg: #f4f3ef;        /* warm paper tone */
+      --ink: #111;
+      --shadow: rgba(0, 0, 0, 0.15);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .portfolio-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    #flipbook {
+      width: min(90vw, 1100px);
+      height: min(85vh, 700px);
+      box-shadow: 0 30px 80px var(--shadow);
+      background: #fff;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    /* Page image */
+    .page {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Page numbers */
+    .page::after {
+      content: attr(data-page);
+      position: absolute;
+      bottom: 18px;
+      right: 24px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      opacity: 0.45;
+      color: #000;
+    }
+
+    /* Subtle paper grain */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
 </head>
 <body>
 
@@ -24,11 +90,85 @@
     </div>
   </div>
 
-  <!-- PDF.js from unpkg -->
+  <!-- PDF.js from unpkg (library, do NOT touch) -->
   <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-  <!-- StPageFlip -->
+  <!-- StPageFlip (library, do NOT touch) -->
   <script src="https://unpkg.com/page-flip/dist/js/page-flip.browser.min.js"></script>
-  <!-- Your logic -->
-  <script src="script.js"></script>
+
+  <script>
+    (function () {
+      const container = document.getElementById("flipbook");
+
+      // Configure PDF.js worker
+      if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+      } else {
+        container.innerHTML = "<p style='padding:16px; color:#b00; font-family: Montserrat, sans-serif;'>Error: PDF.js failed to load.</p>";
+        return;
+      }
+
+      // 👉 Use the PDF stored in this repo
+      const pdfUrl = "./portfolio.pdf";
+
+      // Show a basic loading message
+      container.innerHTML = "<div style='padding:16px; font-family: Montserrat, sans-serif; color:#444;'>Loading portfolio…</div>";
+
+      pdfjsLib
+        .getDocument(pdfUrl)
+        .promise.then((pdf) => {
+          const pages = [];
+
+          const renderPage = (num) => {
+            return pdf.getPage(num).then((page) => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+
+              const viewport = page.getViewport({ scale: 2 });
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+
+              return page
+                .render({ canvasContext: ctx, viewport })
+                .promise.then(() => {
+                  const img = document.createElement("img");
+                  img.src = canvas.toDataURL("image/jpeg", 0.95);
+                  img.classList.add("page");
+                  img.setAttribute("data-page", num);
+                  pages.push(img);
+                });
+            });
+          };
+
+          const renders = [];
+          for (let i = 1; i <= pdf.numPages; i++) {
+            renders.push(renderPage(i));
+          }
+
+          return Promise.all(renders).then(() => {
+            // Clear loading text
+            container.innerHTML = "";
+
+            const pageFlip = new St.PageFlip(container, {
+              width: 550,
+              height: 700,
+              size: "stretch",
+              maxShadowOpacity: 0.15,
+              showCover: true,
+              mobileScrollSupport: false,
+              useMouseEvents: true,
+            });
+
+            pageFlip.loadFromHTML(pages);
+          });
+        })
+        .catch((err) => {
+          container.innerHTML =
+            "<p style='padding:16px; color:#b00; font-family: Montserrat, sans-serif;'>Error loading PDF: " +
+            (err && err.message ? err.message : String(err)) +
+            "</p>";
+        });
+    })();
+  </script>
 </body>
 </html>
