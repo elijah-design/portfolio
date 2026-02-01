@@ -4,6 +4,13 @@ const PDF_URL = "./assets/pdf/portfolio.pdf";
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
+pdfDoc = await pdfjsLib.getDocument({
+  url: PDF_URL,
+  disableAutoFetch: true,
+  disableStream: true,
+  disableRange: true,
+}).promise;
+
 /* ========= Elements ========= */
 const viewer = document.getElementById('viewer');
 const stage = document.getElementById('stage');
@@ -516,6 +523,7 @@ function bindUI() {
 
   // Pointer pan/pinch
   stage.addEventListener('pointer
+
 
 
 
