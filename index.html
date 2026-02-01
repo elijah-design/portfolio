@@ -9,7 +9,9 @@
     <!-- Fonts + Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Montserrat:wght@100;300;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Montserrat:wght@100;300;500;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- PDF.js -->
@@ -184,10 +186,7 @@
             align-items: center;
             gap: .6rem;
             padding: 0 .9rem;
-
-            /* 🔵 CHANGED: leave space for the sliding left dock */
             padding-left: calc(.9rem + 104px);
-
             background: rgba(255, 255, 255, .85);
             backdrop-filter: blur(6px);
             border-bottom: 1px solid var(--stroke);
@@ -261,13 +260,12 @@
             letter-spacing: .08rem;
         }
 
-        /* 🔵 CHANGED: LEFT DOCK (buttons slide in/out) */
+        /* LEFT DOCK */
         .left-dock {
             position: absolute;
             left: 8px;
             top: 50%;
             transform: translateX(-70px) translateY(-50%);
-            /* hidden */
             display: flex;
             gap: .4rem;
             z-index: 9;
@@ -284,7 +282,6 @@
         }
 
         /* ================= LEFT PANELS ================= */
-        /* 🔵 CHANGED: thumbs + outline are BOTH left panels under the dock */
         .side-panel {
             position: absolute;
             left: 0;
@@ -321,8 +318,7 @@
             z-index: 1;
         }
 
-        /* Thumbnails list (vertical) */
-        /* 🔵 CHANGED: thumbs are vertical and live inside #thumbsPanel */
+        /* Thumbnails panel */
         #thumbs {
             padding: 10px;
             display: flex;
@@ -348,7 +344,6 @@
         .thumb canvas {
             width: 100%;
             height: auto;
-            /* 🔵 CHANGED: keep aspect ratio */
             display: block;
             border-radius: 10px;
         }
@@ -369,7 +364,7 @@
             outline: 2px solid #000;
         }
 
-        /* Outline */
+        /* Outline list */
         #outlineList {
             list-style: none;
             margin: 0;
@@ -579,7 +574,6 @@
                 font-size: 12px;
             }
 
-            /* 🔵 CHANGED: dock stays visible on touch */
             .left-dock {
                 transform: translateX(0) translateY(-50%);
                 opacity: 1;
@@ -595,7 +589,6 @@
                 display: none;
             }
 
-            /* hide fit buttons on tiny screens */
             #preset {
                 display: none;
             }
@@ -608,7 +601,9 @@
     <header class="site-header">
         <div class="header-inner">
             <a href="https://www.elijah-design.com" class="brand fade-in" style="--delay:.1s">
-                <img class="logo" loading="lazy" src="https://drive.google.com/thumbnail?id=1NhRACGH1UPU_V0Buuc-O02R7ffjXvAOv&sz=w1000" alt="Elijah Design">
+                <img class="logo" loading="lazy"
+                    src="https://drive.google.com/thumbnail?id=1NhRACGH1UPU_V0Buuc-O02R7ffjXvAOv&sz=w1000"
+                    alt="Elijah Design">
             </a>
 
             <div class="divider"></div>
@@ -618,13 +613,25 @@
             </a>
 
             <div class="social-icons">
-                <a href="https://ca.linkedin.com/in/elijah-design" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin fade-in" style="--delay:.6s"></i></a>
-                <a href="https://www.instagram.com/elijahdesign/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram fade-in" style="--delay:.8s"></i></a>
-                <a href="mailto:designs.elijah@gmail.com" aria-label="Email"><i class="fas fa-envelope fade-in" style="--delay:1s"></i></a>
-                <a href="https://www.youtube.com/@elijah-design/videos" target="_blank" aria-label="YouTube"><i class="fab fa-youtube fade-in" style="--delay:1.2s"></i></a>
+                <a href="https://ca.linkedin.com/in/elijah-design" target="_blank" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin fade-in" style="--delay:.6s"></i>
+                </a>
+                <a href="https://www.instagram.com/elijahdesign/" target="_blank" aria-label="Instagram">
+                    <i class="fab fa-instagram fade-in" style="--delay:.8s"></i>
+                </a>
+                <a href="mailto:designs.elijah@gmail.com" aria-label="Email">
+                    <i class="fas fa-envelope fade-in" style="--delay:1s"></i>
+                </a>
+                <a href="https://www.youtube.com/@elijah-design/videos" target="_blank" aria-label="YouTube">
+                    <i class="fab fa-youtube fade-in" style="--delay:1.2s"></i>
+                </a>
             </div>
 
-            <a class="download-btn fade-in" style="--delay:1.4s" href="https://drive.google.com/file/d/1ts78iAFuajxSzBSuq11J5YVyxrlnbdsf/view?usp=sharing" target="_blank">🔒 DOWNLOAD PORTFOLIO</a>
+            <a class="download-btn fade-in" style="--delay:1.4s"
+                href="https://drive.google.com/file/d/1ts78iAFuajxSzBSuq11J5YVyxrlnbdsf/view?usp=sharing"
+                target="_blank">
+                🔒 DOWNLOAD PORTFOLIO
+            </a>
         </div>
     </header>
 
@@ -632,8 +639,6 @@
     <section class="viewer-shell" role="main">
         <!-- TOOLBAR -->
         <div class="toolbar" id="toolbar">
-
-            <!-- 🔵 CHANGED: sliding left dock -->
             <div class="left-dock">
                 <button id="outlineBtn" class="btn" title="Table of Contents" aria-expanded="false">
                     <i class="fa-solid fa-list-ul"></i>
@@ -646,15 +651,21 @@
             <!-- NAV -->
             <div class="group">
                 <button id="prev" class="btn" title="Previous (←)" aria-label="Previous">◀</button>
-                <div class="label" aria-live="polite"><span id="pageNum">—</span>/<span id="pageCount">—</span></div>
+                <div class="label" aria-live="polite">
+                    <span id="pageNum">—</span>/<span id="pageCount">—</span>
+                </div>
                 <button id="next" class="btn" title="Next (→)" aria-label="Next">▶</button>
             </div>
 
             <div class="spacer"></div>
 
             <div class="group">
-                <button id="fitW" class="btn" title="Fit width"><i class="fa-solid fa-arrows-left-right-to-line"></i></button>
-                <button id="fitP" class="btn" title="Fit page"><i class="fa-solid fa-maximize"></i></button>
+                <button id="fitW" class="btn" title="Fit width">
+                    <i class="fa-solid fa-arrows-left-right-to-line"></i>
+                </button>
+                <button id="fitP" class="btn" title="Fit page">
+                    <i class="fa-solid fa-maximize"></i>
+                </button>
             </div>
 
             <div class="group">
@@ -663,7 +674,8 @@
                 </button>
                 <div id="zoomLbl" class="label">100%</div>
                 <button id="zoomIn" class="btn" title="Zoom in" aria-label="Zoom in">
-                    <i class="fa fa-search-plus fa-1.5x"></i></button>
+                    <i class="fa fa-search-plus fa-1.5x"></i>
+                </button>
                 <select id="preset" class="select" title="Zoom preset" aria-label="Zoom preset">
                     <option value="0.5">50%</option>
                     <option value="0.75">75%</option>
@@ -673,17 +685,19 @@
                     <option value="3">300%</option>
                     <option value="4">400%</option>
                 </select>
-                <button id="center" class="btn" title="Center" aria-label="Center"><i class="fa-solid fa-crosshairs"></i></button>
+                <button id="center" class="btn" title="Center" aria-label="Center">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </button>
             </div>
         </div>
 
-        <!-- 🔵 CHANGED: Thumbnails panel (left) -->
+        <!-- Thumbnails panel -->
         <aside id="thumbsPanel" class="side-panel" aria-label="Page thumbnails">
             <div class="panel-title">PAGES</div>
             <div id="thumbs"></div>
         </aside>
 
-        <!-- 🔵 CHANGED: Outline panel (left) -->
+        <!-- Outline panel -->
         <aside id="outlinePanel" class="side-panel" aria-label="Document outline">
             <div class="panel-title">TABLE OF CONTENTS</div>
             <ul id="outlineList"></ul>
@@ -692,8 +706,12 @@
         <!-- VIEWPORT -->
         <div id="viewer" class="viewer">
             <div class="edge-nav" aria-hidden="false">
-                <button id="prevSide" class="edge-btn left" title="Previous (←)" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
-                <button id="nextSide" class="edge-btn right" title="Next (→)" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+                <button id="prevSide" class="edge-btn left" title="Previous (←)" aria-label="Previous">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="nextSide" class="edge-btn right" title="Next (→)" aria-label="Next">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
             </div>
 
             <div id="stage">
@@ -706,13 +724,10 @@
 
     <script>
         /* ========= CONFIG ========= */
-       /* ========= CONFIG ========= */
-const PDF_URL = "./portfolio.pdf";
+        const PDF_URL = "https://drive.google.com/uc?export=download&id=1YLWNAZNsc8GIaQyiFgMjwLaniwwrP9jJ";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
         /* ========= Elements ========= */
         const viewer = document.getElementById('viewer');
@@ -736,7 +751,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
         const pageNumEl = document.getElementById('pageNum');
         const pageCountEl = document.getElementById('pageCount');
 
-        const thumbsPanel = document.getElementById('thumbsPanel'); // 🔵 CHANGED
+        const thumbsPanel = document.getElementById('thumbsPanel');
         const thumbsEl = document.getElementById('thumbs');
 
         const outlineBtn = document.getElementById('outlineBtn');
@@ -766,24 +781,21 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
         let outlineBuiltOnce = false;
 
         /* ========= Performance knobs ========= */
-        const DPR = Math.max(1, Math.min((window.devicePixelRatio || 1), 1.5)); // ✅ lower = smoother
-        const PREVIEW_QUALITY = 0.45; // ✅ faster first paint
-        const FINAL_QUALITY = 0.90; // ✅ still crisp, less lag
+        const DPR = Math.max(1, Math.min((window.devicePixelRatio || 1), 1.5));
+        const PREVIEW_QUALITY = 0.45;
+        const FINAL_QUALITY = 0.90;
         const SCALE_LEVELS = [0.75, 1, 1.5, 2, 3, 4];
-        const MAX_RENDER_SCALE = 2.0; // ✅ hard cap on pixel cost
+        const MAX_RENDER_SCALE = 2.0;
 
         let currentLevelKey = null;
         let mainRenderTasks = [];
         let thumbRenderTasks = [];
         let idleUpgradeTimer = null;
+        let wheelUpgradeTimer = null;
 
-        let wheelUpgradeTimer = null; // ✅ add this
-
-        const rIC = window.requestIdleCallback || ((cb) => setTimeout(() => cb({
-            didTimeout: true,
-            timeRemaining: () => 0
-        }), 120));
-
+        const rIC = window.requestIdleCallback || ((cb) =>
+            setTimeout(() => cb({ didTimeout: true, timeRemaining: () => 0 }), 120)
+        );
 
         /* ========= Page cache ========= */
         const pageCache = new Map();
@@ -819,636 +831,4 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
         function clampPan() {
             const vw = viewer.clientWidth,
                 vh = viewer.clientHeight;
-            const {
-                w,
-                h
-            } = getScaledSize();
-            const maxX = Math.max(0, (w - vw) / 2);
-            const maxY = Math.max(0, (h - vh) / 2);
-            panX = (w <= vw) ? 0 : Math.min(maxX, Math.max(-maxX, panX));
-            panY = (h <= vh) ? 0 : Math.min(maxY, Math.max(-maxY, panY));
-        }
-
-        function applyTransform() {
-            clampPan();
-            stage.style.transform = `translate(-50%,-50%) translate(${panX}px, ${panY}px) scale(${stageScale})`;
-            zLbl.textContent = Math.round(stageScale * 100) + "%";
-
-            // ✅ Don’t trigger hi-res upgrades while actively dragging/pinching
-            if (!isPointerDown && pointers.size < 2) {
-                scheduleHiResIfNeeded();
-            }
-        }
-
-
-        function fitWidth() {
-            stageScale = Math.max(0.1, viewer.clientWidth / layoutBase.width);
-            panX = panY = 0;
-            applyTransform();
-        }
-
-        function fitPage() {
-            const vw = viewer.clientWidth,
-                vh = viewer.clientHeight;
-            stageScale = Math.max(0.1, Math.min(vw / layoutBase.width, vh / layoutBase.height));
-            panX = panY = 0;
-            applyTransform();
-        }
-
-        function setZoom(newScale, px, py) {
-            newScale = Math.max(0.1, Math.min(6, newScale));
-            const rect = viewer.getBoundingClientRect();
-            const cx = px - rect.left - rect.width / 2 - panX;
-            const cy = py - rect.top - rect.height / 2 - panY;
-            const factor = newScale / stageScale;
-            panX = panX - cx * (factor - 1);
-            panY = panY - cy * (factor - 1);
-            stageScale = newScale;
-            applyTransform();
-        }
-
-        function zoomLevelKey(scale) {
-            let key = SCALE_LEVELS[0];
-            for (const lvl of SCALE_LEVELS) {
-                if (scale >= lvl) key = lvl;
-                else break;
-            }
-            return key;
-        }
-
-        function targetRenderScale(qualityMultiplier) {
-            const key = zoomLevelKey(stageScale);
-            const wanted = DPR * key * qualityMultiplier;
-            return Math.min(MAX_RENDER_SCALE, wanted);
-        }
-
-        function cancelMainInFlight() {
-            mainRenderTasks.forEach(t => {
-                try {
-                    t.cancel();
-                } catch {}
-            });
-            mainRenderTasks = [];
-            if (idleUpgradeTimer) {
-                clearTimeout(idleUpgradeTimer);
-                idleUpgradeTimer = null;
-            }
-        }
-
-        function setDockOpenState() {
-            const open = outlinePanel.classList.contains('open') || thumbsPanel.classList.contains('open');
-            document.body.classList.toggle('dock-open', open);
-        }
-
-        /* ========= Annotations ========= */
-        function addLink(annLay, x, y, w, h, url) {
-            const a = document.createElement('a');
-            a.className = 'pdf-link';
-            a.href = url;
-            a.target = '_blank';
-            a.rel = 'noopener';
-            Object.assign(a.style, {
-                left: `${x}px`,
-                top: `${y}px`,
-                width: `${w}px`,
-                height: `${h}px`
-            });
-            annLay.appendChild(a);
-        }
-        async function renderAnnotations(page, annLay, baseViewport) {
-            annLay.replaceChildren();
-            annLay.style.width = `${Math.round(baseViewport.width)}px`;
-            annLay.style.height = `${Math.round(baseViewport.height)}px`;
-            const annots = await page.getAnnotations();
-            for (const a of annots) {
-                if (a.subtype === 'Link' && (a.url || a.dest) && a.rect) {
-                    const rect = baseViewport.convertToViewportRectangle(a.rect);
-                    const [x1, y1, x2, y2] = rect;
-                    const x = Math.min(x1, x2),
-                        y = Math.min(y1, y2);
-                    const w = Math.abs(x2 - x1),
-                        h = Math.abs(y2 - y1);
-                    addLink(annLay, x, y, w, h, a.url || '#');
-                }
-            }
-        }
-
-        /* ========= Rendering ========= */
-        async function renderPageInto(sub, page, base, renderScale) {
-            const vp = page.getViewport({
-                scale: renderScale
-            });
-
-            const c = sub.querySelector('canvas') || document.createElement('canvas');
-            const ann = sub.querySelector('.annLayer') || (() => {
-                const d = document.createElement('div');
-                d.className = 'annLayer';
-                return d;
-            })();
-
-            c.width = Math.floor(vp.width);
-            c.height = Math.floor(vp.height);
-
-            // keep layout size based on scale=1, zoom via CSS transform
-            c.style.width = Math.round(base.width) + "px";
-            c.style.height = Math.round(base.height) + "px";
-
-            if (!c.parentNode) sub.appendChild(c);
-            if (!ann.parentNode) sub.appendChild(ann);
-
-            const ctx = c.getContext('2d', {
-                alpha: false,
-                desynchronized: true
-            });
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(0, 0, c.width, c.height);
-
-            const task = page.render({
-                canvasContext: ctx,
-                viewport: vp,
-                intent: "display"
-            });
-            mainRenderTasks.push(task);
-            await task.promise;
-            await renderAnnotations(page, ann, base);
-        }
-
-        async function renderSpread(n, qualityMultiplier) {
-            const spread = isSpreadLeft(n);
-            const left = spread ? normalizeLeft(n) : 1;
-            const pages = spread ? [left, Math.min(left + 1, pdfDoc.numPages)] : [1];
-
-            spreadEl.replaceChildren();
-            pageNumEl.textContent = spread ? `${pages[0]}–${pages[1]}` : "1";
-
-            const page0 = await getPageCached(pages[0]);
-            const base0 = page0.getViewport({
-                scale: 1
-            });
-
-            layoutBase.width = base0.width * (spread ? 2 : 1);
-            layoutBase.height = base0.height;
-
-            for (let idx = 0; idx < pages.length; idx++) {
-                const pNum = pages[idx];
-                const p = (idx === 0) ? page0 : await getPageCached(pNum);
-                const base = p.getViewport({
-                    scale: 1
-                });
-                const sub = document.createElement('div');
-                sub.className = 'subpage';
-                spreadEl.appendChild(sub);
-                await renderPageInto(sub, p, base, targetRenderScale(qualityMultiplier));
-            }
-
-            pageNum = spread ? pages[0] : 1;
-            applyTransform();
-            // ✅ Prefetch nearby pages so next/prev is faster
-            getPageCached(Math.min(pdfDoc.numPages, pageNum + 2)).catch(() => {});
-            getPageCached(Math.max(1, pageNum - 2)).catch(() => {});
-
-            markActiveThumb(pageNum);
-        }
-
-        function scheduleHiResIfNeeded() {
-            const key = zoomLevelKey(stageScale);
-            if (key === currentLevelKey) return;
-
-            if (idleUpgradeTimer) clearTimeout(idleUpgradeTimer);
-            idleUpgradeTimer = setTimeout(async () => {
-                currentLevelKey = key;
-                cancelMainInFlight();
-                const left = currentIsSpread() ? pageNum : 1;
-                try {
-                    await renderSpread(left, FINAL_QUALITY);
-                } catch {}
-            }, 350);
-        }
-
-        async function renderViewFast(n) {
-            currentLevelKey = null;
-            cancelMainInFlight();
-            await renderSpread(n, PREVIEW_QUALITY);
-            rIC(() => scheduleHiResIfNeeded());
-        }
-
-        /* ========= Thumbnails ========= */
-        function buildThumbs() {
-            const io = new IntersectionObserver((entries) => {
-                entries.forEach(async entry => {
-                    if (!entry.isIntersecting) return;
-                    const holder = entry.target;
-                    io.unobserve(holder);
-
-                    const i = Number(holder.dataset.page);
-                    try {
-                        const p = await getPageCached(i);
-
-                        const maxW = Math.max(160, Math.min(240, (thumbsEl.clientWidth - 24) || 220));
-                        const vp1 = p.getViewport({
-                            scale: 1
-                        });
-                        const scale = Math.max(0.25, maxW / vp1.width);
-                        const vp = p.getViewport({
-                            scale
-                        });
-
-                        const c = document.createElement('canvas');
-                        c.width = Math.floor(vp.width);
-                        c.height = Math.floor(vp.height);
-                        c.style.width = "100%";
-                        c.style.height = "auto"; // 🔵 CHANGED: no stretching
-
-                        const tctx = c.getContext('2d', {
-                            alpha: false
-                        });
-                        tctx.fillStyle = "#fff";
-                        tctx.fillRect(0, 0, c.width, c.height);
-
-                        const task = p.render({
-                            canvasContext: tctx,
-                            viewport: vp
-                        });
-                        thumbRenderTasks.push(task);
-                        await task.promise;
-
-                        holder.insertBefore(c, holder.firstChild);
-                    } catch {}
-                });
-            }, {
-                root: thumbsPanel,
-                rootMargin: "300px 0px",
-                threshold: 0
-            });
-
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                const holder = document.createElement('div');
-                holder.className = 'thumb';
-                holder.title = `Page ${i}`;
-                holder.dataset.page = String(i);
-                holder.innerHTML = `<div class="num">${i}</div>`;
-                thumbsEl.appendChild(holder);
-
-                io.observe(holder);
-                holder.addEventListener('click', () => goToPage(i));
-            }
-        }
-
-        function markActiveThumb(n) {
-            [...thumbsEl.children].forEach(el => {
-                el.classList.toggle('active', Number(el.dataset.page) === n);
-            });
-        }
-
-        /* ========= Outline ========= */
-        async function buildOutline() {
-            if (outlineBuiltOnce) return;
-
-            const outline = await pdfDoc.getOutline();
-            if (!outline || !outline.length) {
-                outlineList.innerHTML = '<li><em style="opacity:.7">No outline found in this PDF.</em></li>';
-                outlineBuiltOnce = true;
-                return;
-            }
-
-            const frag = document.createDocumentFragment();
-
-            async function itemToLi(item, level = 1) {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.textContent = item.title || '(untitled)';
-                a.className = `lvl-${Math.min(level,4)}`;
-                a.href = '#';
-                a.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const targetPage = await resolveDestToPage(item.dest, item.url);
-                    if (targetPage) {
-                        goToPage(targetPage);
-                        outlinePanel.classList.remove('open');
-                        outlineBtn.classList.remove('is-active');
-                        setDockOpenState();
-                    }
-                });
-                li.appendChild(a);
-                frag.appendChild(li);
-
-                if (item.items && item.items.length) {
-                    for (const child of item.items) {
-                        await itemToLi(child, level + 1);
-                    }
-                }
-            }
-
-            for (const it of outline) {
-                await itemToLi(it, 1);
-            }
-
-            outlineList.appendChild(frag);
-            outlineBuiltOnce = true;
-        }
-
-        async function resolveDestToPage(dest, url) {
-            if (url) {
-                window.open(url, '_blank', 'noopener');
-                return null;
-            }
-            try {
-                let destArr = dest;
-                if (typeof dest === 'string') {
-                    destArr = await pdfDoc.getDestination(dest);
-                }
-                if (Array.isArray(destArr) && destArr[0]) {
-                    const ref = destArr[0];
-                    const pageIndex = await pdfDoc.getPageIndex(ref);
-                    return pageIndex + 1;
-                }
-            } catch (e) {
-                console.warn('Failed to resolve destination', e);
-            }
-            return null;
-        }
-
-        /* ========= Navigation ========= */
-        function goToPage(n) {
-            n = Math.max(1, Math.min(pdfDoc.numPages, n));
-            if (n === 1) {
-                renderViewFast(1).then(fitPage);
-            } else {
-                const left = normalizeLeft(n);
-                renderViewFast(left).then(fitPage);
-            }
-        }
-
-        /* ========= UI Bindings ========= */
-        function bindUI() {
-            const goPrev = () => {
-                if (pageNum === 1) return;
-                const step = currentIsSpread() ? 2 : 1;
-                goToPage(Math.max(1, pageNum - step));
-            };
-            const goNext = () => {
-                const step = currentIsSpread() ? 2 : 1;
-                const target = Math.min(pdfDoc.numPages, pageNum + step);
-                goToPage(target === 1 ? 2 : target);
-            };
-
-            prevBtn.onclick = goPrev;
-            nextBtn.onclick = goNext;
-            prevSideBtn.onclick = goPrev;
-            nextSideBtn.onclick = goNext;
-
-            fitWBtn.onclick = fitWidth;
-            fitPBtn.onclick = fitPage;
-
-            const cx = () => viewer.getBoundingClientRect().left + viewer.clientWidth / 2;
-            const cy = () => viewer.getBoundingClientRect().top + viewer.clientHeight / 2;
-            zInBtn.onclick = () => setZoom(stageScale * 1.2, cx(), cy());
-            zOutBtn.onclick = () => setZoom(stageScale / 1.2, cx(), cy());
-            preset.onchange = () => setZoom(parseFloat(preset.value), cx(), cy());
-            centerBtn.onclick = () => {
-                panX = 0;
-                panY = 0;
-                applyTransform();
-            };
-
-
-
-            const isTouchUI = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-            function closeAllPanels() {
-                outlinePanel.classList.remove('open');
-                thumbsPanel.classList.remove('open');
-
-                outlineBtn.classList.remove('is-active');
-                thumbsToggle.classList.remove('is-active');
-
-                outlineBtn.setAttribute('aria-expanded', "false");
-                thumbsToggle.setAttribute('aria-expanded', "false");
-
-                setDockOpenState();
-            }
-
-            async function openOutline() {
-                thumbsPanel.classList.remove('open');
-                thumbsToggle.classList.remove('is-active');
-                thumbsToggle.setAttribute('aria-pressed', "false");
-
-                outlinePanel.classList.add('open');
-                outlineBtn.classList.add('is-active');
-                outlineBtn.setAttribute('aria-expanded', "true");
-
-                if (!outlineBuiltOnce) await buildOutline();
-                setDockOpenState();
-            }
-
-            function openThumbs() {
-                outlinePanel.classList.remove('open');
-                outlineBtn.classList.remove('is-active');
-                outlineBtn.setAttribute('aria-expanded', "false");
-
-                thumbsPanel.classList.add('open');
-                thumbsToggle.classList.add('is-active');
-                thumbsToggle.setAttribute('aria-pressed', "true");
-
-                setDockOpenState();
-            }
-
-            if (!isTouchUI) {
-                // ===== Desktop hover behavior =====
-                let closeTimer = null;
-                const cancelClose = () => {
-                    if (closeTimer) clearTimeout(closeTimer);
-                };
-                const scheduleClose = () => {
-                    cancelClose();
-                    closeTimer = setTimeout(closeAllPanels, 140);
-                };
-
-                outlineBtn.addEventListener('mouseenter', () => {
-                    cancelClose();
-                    openOutline();
-                });
-                thumbsToggle.addEventListener('mouseenter', () => {
-                    cancelClose();
-                    openThumbs();
-                });
-
-                // Keep open while hovering dock/panels; close when leaving them
-                document.querySelector('.left-dock')?.addEventListener('mouseenter', cancelClose);
-                document.querySelector('.left-dock')?.addEventListener('mouseleave', scheduleClose);
-
-                outlinePanel.addEventListener('mouseenter', cancelClose);
-                outlinePanel.addEventListener('mouseleave', scheduleClose);
-
-                thumbsPanel.addEventListener('mouseenter', cancelClose);
-                thumbsPanel.addEventListener('mouseleave', scheduleClose);
-
-            } else {
-                // ===== Mobile/touch behavior: TAP toggles (pressed/unpressed) =====
-                outlineBtn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const willOpen = !outlinePanel.classList.contains('open');
-                    if (willOpen) await openOutline();
-                    else closeAllPanels();
-                });
-
-                thumbsToggle.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const willOpen = !thumbsPanel.classList.contains('open');
-                    if (willOpen) openThumbs();
-                    else closeAllPanels();
-                });
-
-                // Optional: tap outside to close
-                document.addEventListener('click', (e) => {
-                    const inDock = e.target.closest('.left-dock');
-                    const inPanels = e.target.closest('#outlinePanel') || e.target.closest('#thumbsPanel');
-                    if (!inDock && !inPanels) closeAllPanels();
-                });
-            }
-
-
-
-            // Pointer pan/pinch
-            stage.addEventListener('pointerdown', (e) => {
-                if (e.target.closest('.pdf-link')) return;
-                stage.setPointerCapture(e.pointerId);
-                pointers.set(e.pointerId, {
-                    x: e.clientX,
-                    y: e.clientY
-                });
-
-                if (pointers.size === 1) {
-                    isPointerDown = true;
-                    startX = e.clientX;
-                    startY = e.clientY;
-                    startPanX = panX;
-                    startPanY = panY;
-                    viewer.style.cursor = 'grabbing';
-                    document.body.classList.add('is-panning');
-                }
-                e.preventDefault();
-            });
-
-            stage.addEventListener('pointermove', (e) => {
-                if (!pointers.has(e.pointerId)) return;
-                pointers.set(e.pointerId, {
-                    x: e.clientX,
-                    y: e.clientY
-                });
-
-                if (pointers.size === 1 && isPointerDown) {
-                    panX = startPanX + (e.clientX - startX);
-                    panY = startPanY + (e.clientY - startY);
-                    applyTransform();
-                }
-
-                if (pointers.size === 2) {
-                    const pts = [...pointers.values()];
-                    const dx = pts[1].x - pts[0].x;
-                    const dy = pts[1].y - pts[0].y;
-                    const dist = Math.hypot(dx, dy);
-
-                    if (!stage._pinchStart) {
-                        stage._pinchStart = dist;
-                        stage._scaleStart = stageScale;
-                        stage._mid = {
-                            x: (pts[0].x + pts[1].x) / 2,
-                            y: (pts[0].y + pts[1].y) / 2
-                        };
-                    }
-
-                    const factor = dist / stage._pinchStart;
-                    setZoom(stage._scaleStart * factor, stage._mid.x, stage._mid.y);
-                }
-            }, {
-                passive: false
-            });
-
-            const endPointer = (e) => {
-                if (pointers.has(e.pointerId)) pointers.delete(e.pointerId);
-                if (pointers.size < 2) stage._pinchStart = null;
-
-                if (pointers.size === 0) {
-                    isPointerDown = false;
-                    viewer.style.cursor = '';
-                    document.body.classList.remove('is-panning');
-                    scheduleHiResIfNeeded(); // ✅ one clean upgrade after interaction ends
-
-                }
-            };
-
-            stage.addEventListener('pointerup', endPointer);
-            stage.addEventListener('pointercancel', endPointer);
-
-            viewer.addEventListener('wheel', e => {
-                if (e.ctrlKey) e.preventDefault();
-                if (e.shiftKey) {
-                    panX -= e.deltaY;
-                    applyTransform();
-                    return;
-                }
-                const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-                setZoom(stageScale * factor, e.clientX, e.clientY);
-                clearTimeout(wheelUpgradeTimer);
-                wheelUpgradeTimer = setTimeout(() => scheduleHiResIfNeeded(), 200);
-
-                e.preventDefault();
-            }, {
-                passive: false
-            });
-
-            let lastTap = 0;
-            viewer.addEventListener('click', (e) => {
-                const now = Date.now();
-                if (now - lastTap < 300) setZoom(stageScale * 1.35, e.clientX, e.clientY);
-                lastTap = now;
-            });
-
-            window.addEventListener('keydown', e => {
-                if (e.key === 'ArrowRight') goNext();
-                if (e.key === 'ArrowLeft') goPrev();
-                if (e.key === '+') zInBtn.click();
-                if (e.key === '-') zOutBtn.click();
-                if (e.key.toLowerCase() === 'f') fitPage();
-                if (e.key.toLowerCase() === 'w') fitWidth();
-                if (e.key.toLowerCase() === 'o') outlineBtn.click();
-                if (e.key.toLowerCase() === 't') thumbsToggle.click();
-            });
-
-            const ro = new ResizeObserver(() => fitPage());
-            ro.observe(viewer);
-            window.addEventListener('orientationchange', () => setTimeout(fitPage, 250));
-        }
-
-        /* ========= Boot ========= */
-        (async function boot() {
-            try {
-                pdfDoc = await pdfjsLib.getDocument({
-                    url: PDF_URL,
-                    disableAutoFetch: false,
-                    disableStream: false,
-                    rangeChunkSize: 1 << 18,
-                    maxImageSize: -1,
-                    isEvalSupported: true,
-                    enableXfa: false
-                }).promise;
-
-                pageCountEl.textContent = pdfDoc.numPages;
-                buildThumbs();
-
-                await renderViewFast(1);
-                fitPage();
-                panX = panY = 0;
-                requestAnimationFrame(applyTransform);
-
-                bindUI();
-            } catch (err) {
-                console.error("Failed to load PDF:", err);
-                alert("Could not load the PDF (CORS/URL?). Check console for details.");
-            }
-        })();
-    </script>
-</body>
-
-</html>
+            c
