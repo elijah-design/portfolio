@@ -1,13 +1,19 @@
 :root {
   --bg: #f4f3ef;        /* warm paper tone */
   --ink: #111;
-  --shadow: rgba(0,0,0,.15);
+  --shadow: rgba(0, 0, 0, 0.15);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   background: var(--bg);
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .portfolio-wrapper {
@@ -15,6 +21,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 16px;
 }
 
 #flipbook {
@@ -22,11 +29,19 @@ body {
   height: min(85vh, 700px);
   box-shadow: 0 30px 80px var(--shadow);
   background: #fff;
-}
-.page {
-  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
 }
 
+/* Page image */
+.page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Page numbers */
 .page::after {
   content: attr(data-page);
   position: absolute;
@@ -37,6 +52,8 @@ body {
   opacity: 0.45;
   color: #000;
 }
+
+/* Subtle paper grain */
 body::after {
   content: "";
   position: fixed;
@@ -45,8 +62,4 @@ body::after {
   opacity: 0.06;
   pointer-events: none;
   z-index: 999;
-}
-#flipbook {
-  border-radius: 2px;
-  overflow: hidden;
 }
