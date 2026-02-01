@@ -1,23 +1,25 @@
-{\rtf1}const pdfUrl = './pdf/portfolio.pdf';
+// Make sure PDF.js knows where its worker file is
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-const pageFlip = new St.PageFlip(
-  document.getElementById("flipbook"),
-  {
-    width: 550,
-    height: 700,
-    size: "stretch",
-    maxShadowOpacity: 0.25,
-    showCover: true,
-    mobileScrollSupport: false,
-    useMouseEvents: true
-  }
-);
+// Path to your PDF inside the /pdf folder
+const pdfUrl = "./pdf/portfolio.pdf";
 
-pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+  width: 550,
+  height: 700,
+  size: "stretch",
+  maxShadowOpacity: 0.15, // softer shadow
+  showCover: true,
+  mobileScrollSupport: false,
+  useMouseEvents: true,
+});
+
+pdfjsLib.getDocument(pdfUrl).promise.then((pdf) => {
   const pages = [];
 
-  const renderPage = num => {
-    return pdf.getPage(num).then(page => {
+  const renderPage = (num) => {
+    return pdf.getPage(num).then((page) => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
@@ -25,14 +27,15 @@ pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
-      return page.render({ canvasContext: ctx, viewport }).promise.then(() => {
-        const img = document.createElement("img");
-        img.src = canvas.toDataURL("image/jpeg", 0.95);
-        img.classList.add("page");
-img.setAttribute("data-page", num);
-
-        pages.push(img);
-      });
+      return page
+        .render({ canvasContext: ctx, viewport })
+        .promise.then(() => {
+          const img = document.createElement("img");
+          img.src = canvas.toDataURL("image/jpeg", 0.95);
+          img.classList.add("page");
+          img.setAttribute("data-page", num); // for page numbers
+          pages.push(img);
+        });
     });
   };
 
