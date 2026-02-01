@@ -12,7 +12,7 @@ if (window.pdfjsLib) {
 }
 
 // Path to your PDF
-const pdfUrl = "./pdf/portfolio.pdf";
+const pdfUrl = "https://1drv.ms/b/c/5a33d7f1d2b0b21f/IQATD2-sMC5aQqM5_sINtEYsAR6jR_-vcFPxBwU86JRJMho?e=sphidG";
 
 // If PDF.js is available, try to render
 if (window.pdfjsLib) {
@@ -72,3 +72,4 @@ if (window.pdfjsLib) {
         "</p>";
     });
 }
+
