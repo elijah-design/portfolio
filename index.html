@@ -3,27 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elijah Alejandro — Portfolio</title>
+  <title>Elijah Alejandro — Portfolio Flipbook</title>
 
-  <!-- Fonts -->
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <!-- PageFlip -->
+  <!-- StPageFlip -->
   <link rel="stylesheet" href="https://unpkg.com/page-flip/dist/css/page-flip.css">
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="portfolio-wrapper">
-  <div id="flipbook"></div>
-</div>
+  <div class="portfolio-wrapper">
+    <div id="flipbook">
+      <!-- Fallback text in case JS fails -->
+      <div style="padding:16px; font-family: 'Montserrat', sans-serif; color:#444;">
+        Loading portfolio… if this message doesn’t disappear, something went wrong.
+      </div>
+    </div>
+  </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://unpkg.com/page-flip/dist/js/page-flip.browser.min.js"></script>
-<script src="script.js"></script>
-
-
+  <!-- PDF.js from unpkg -->
+  <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <!-- StPageFlip -->
+  <script src="https://unpkg.com/page-flip/dist/js/page-flip.browser.min.js"></script>
+  <!-- Your logic -->
+  <script src="script.js"></script>
 </body>
 </html>
-
