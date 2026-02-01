@@ -1,5 +1,5 @@
 /* ========= CONFIG ========= */
-const PDF_URL = "https://drive.google.com/uc?export=download&id=1YLWNAZNsc8GIaQyiFgMjwLaniwwrP9jJ";
+const PDF_URL = "assets/pdf/portfolio.pdf";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -516,3 +516,4 @@ function bindUI() {
 
   // Pointer pan/pinch
   stage.addEventListener('pointer
+
