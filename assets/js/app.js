@@ -1,8 +1,10 @@
 /* ========= CONFIG ========= */
-const PDF_URL = "https://elijah-design.github.io/portfolio/assets/pdf/portfolio.pdf";
+<script>
+  window.PDF_URL = "https://elijah-design.github.io/portfolio/assets/pdf/portfolio.pdf";
+</script>
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script defer src="assets/js/app.js"></script>
 
 
 /* ========= Elements ========= */
@@ -517,6 +519,7 @@ function bindUI() {
 
   // Pointer pan/pinch
   stage.addEventListener('pointer
+
 
 
 
